@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
+import Thread from "../models/thread.model";
 
 type UserData = {
   userId: string;
@@ -34,11 +35,38 @@ export async function updatedUser(data: UserData): Promise<void> {
   }
 }
 export async function fetchUser(userId: string) {
+
+  connectToDB();
   try {
-    connectToDB();
     const user = await User.findOne({ id: userId });
+
     return user;
   } catch (error: any) {
     throw new Error(`Field to get user: ${error.message} `);
   }
 }
+
+export const fetchUserPosts = async (userId: string) => {
+  try {
+    connectToDB();
+
+    // TODO: Populate community
+    const posts = await User.findOne({ id: userId }).populate({
+      path: "threads",
+      model: Thread,
+      populate: {
+        path: "children",
+        model: Thread,
+        populate: {
+          path: "author",
+          model: User,
+          select: "name image id",
+        },
+      },
+    });
+
+    return posts;
+  } catch (err) {
+    throw new Error("Faild to get Posts");
+  }
+};

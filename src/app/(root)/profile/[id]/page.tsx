@@ -16,7 +16,9 @@ const Page = async ({ params }: Props) => {
 
   if (!user) return null;
 
+
   const userInfo = await fetchUser(params.id);
+
 
   if (!userInfo.onboarded) redirect("/onboarding");
 
@@ -61,7 +63,7 @@ const Page = async ({ params }: Props) => {
               <ThreadsTab
                 currentUserId={user.id}
                 accountId={userInfo.id}
-                accountTypeId="User"
+                accountType="User"
               />
             </TabsContent>
           ))}
