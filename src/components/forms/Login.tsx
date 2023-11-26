@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { FormEvent } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
 
+import { signIn } from "next-auth/react";
 const Login = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -12,16 +11,12 @@ const Login = () => {
 
     const username = formData.get("username");
     const password = formData.get("password");
-    try {
-      const res = await axios.post("/api/auth/login", {
-        username,
-        password,
-      });
-    } catch (error: any) {
-      // Still not handled yet
-      //   toast.error("afjf");
-      //   console.log(error?.response?.data?.msg);
-    }
+
+    signIn("credentials", {
+      username,
+      password,
+      redirect: false,
+    });
   };
   return (
     <div className="h-screen flex items-center justify-center">
