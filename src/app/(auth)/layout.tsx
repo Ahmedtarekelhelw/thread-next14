@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "../globals.css";
+import AuthProvider from "../context/AuthProvider";
 
 export const metadata = {
   title: "Thread",
@@ -14,7 +15,9 @@ type RootLayoutType = {
 const RootLayout = ({ children }: RootLayoutType) => {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-dark-1`}>{children}</body>
+      <body className={`${inter.className} bg-dark-1`}>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 };

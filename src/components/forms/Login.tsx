@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { FormEvent } from "react";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 const Login = () => {
+  const { data: session } = useSession();
+  console.log({ session });
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -12,12 +16,20 @@ const Login = () => {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    signIn("credentials", {
+    const res = await signIn("credentials", {
       username,
       password,
       redirect: false,
     });
+
+    // if the request is ok
+    if (res.ok) {
+      toast.success(`Welcome ${res?.ok}!`);
+    } else {
+      toast.error(res?.error);
+    }
   };
+
   return (
     <div className="h-screen flex items-center justify-center">
       <form

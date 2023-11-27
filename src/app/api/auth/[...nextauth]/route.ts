@@ -17,6 +17,7 @@ const handler = NextAuth({
             username: credentials?.username,
             password: credentials?.password,
           });
+
           return user.data;
         } catch (error: any) {
           throw new Error(error.response?.data?.msg || "Something went wrong");
@@ -24,6 +25,16 @@ const handler = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user, account, profile, isNewUser }) {
+      return { ...token, ...user };
+    },
+    async session({ session, user: u, token: t }) {
+      const { user, token } = t;
+      session.user = { ...user, token };
+      return session;
+    },
+  },
 });
 
 export { handler as GET, handler as POST };
