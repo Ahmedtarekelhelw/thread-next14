@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { FormEvent } from "react";
-
+import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 const Login = () => {
   const { data: session } = useSession();
-  console.log({ session });
-
+  const router = useRouter();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -23,8 +22,9 @@ const Login = () => {
     });
 
     // if the request is ok
-    if (res.ok) {
-      toast.success(`Welcome ${res?.ok}!`);
+    if (res?.ok) {
+      // if (!session?.user?.onboarded) router.push("/onboarding");
+      // router.push("/");
     } else {
       toast.error(res?.error);
     }

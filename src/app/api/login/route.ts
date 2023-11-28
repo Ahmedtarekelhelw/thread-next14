@@ -29,9 +29,9 @@ export const POST = async (req: Request) => {
     // generate jwt
     const token = jwt.sign({ id: checkUser._id }, process.env.JWT_KEY);
 
-    const { password: dbPass, ...user } = checkUser._doc;
+    const { password: dbPass, __v, ...user } = checkUser._doc;
 
-    return NextResponse.json({ user, token }, { status: 200 });
+    return NextResponse.json({ user: { ...user, token } }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ msg: "something went wrong" }, { status: 500 });
   }
