@@ -25,8 +25,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   user: {
-    id: string;
-    objectId: string;
+    _id: string;
     username: string;
     name: string;
     bio: string;
@@ -85,7 +84,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       name: values.name,
       bio: values.bio,
       image: values.profile_photo,
-      userId: user.id,
+      userId: user._id,
       path: pathname,
     };
 

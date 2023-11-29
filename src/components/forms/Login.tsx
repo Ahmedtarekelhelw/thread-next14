@@ -7,6 +7,7 @@ import { signIn, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 const Login = () => {
   const { data: session } = useSession();
+
   const router = useRouter();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,8 +24,11 @@ const Login = () => {
 
     // if the request is ok
     if (res?.ok) {
-      // if (!session?.user?.onboarded) router.push("/onboarding");
-      // router.push("/");
+      if (!session?.user?.onboarded) {
+        router.push("/onboarding");
+        return;
+      }
+      router.push("/");
     } else {
       toast.error(res?.error);
     }

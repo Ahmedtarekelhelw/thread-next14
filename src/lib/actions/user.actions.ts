@@ -17,15 +17,11 @@ export async function updatedUser(data: UserData): Promise<void> {
   connectToDB();
 
   try {
-    await User.findOneAndUpdate(
-      { id: data.userId },
-      {
-        ...data,
-        username: data.username.toLowerCase(),
-        onboarded: true,
-      },
-      { upsert: true }
-    );
+    await User.findByIdAndUpdate(data.userId, {
+      ...data,
+      username: data.username.toLowerCase(),
+      onboarded: true,
+    });
 
     if (data.path === "/profile/edit") {
       revalidatePath(data.path);
@@ -35,7 +31,6 @@ export async function updatedUser(data: UserData): Promise<void> {
   }
 }
 export async function fetchUser(userId: string) {
-
   connectToDB();
   try {
     const user = await User.findOne({ id: userId });

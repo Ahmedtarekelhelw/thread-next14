@@ -18,7 +18,9 @@ export const options: NextAuthOptions = {
             username: username,
             password: password,
           });
-          return user.data;
+          const { image, ...others } = user.data.user;
+
+          return { user: others };
         } catch (error: any) {
           throw new Error(error.response?.data?.msg || "Something went wrong");
         }
@@ -33,7 +35,6 @@ export const options: NextAuthOptions = {
       if (session?.user)
         session.user = {
           ...token.user,
-          expires: session.user.expires,
         };
       return session;
     },
