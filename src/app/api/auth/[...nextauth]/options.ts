@@ -18,9 +18,9 @@ export const options: NextAuthOptions = {
             username: username,
             password: password,
           });
-          const { image, ...others } = user.data.user;
+          // const { image, ...others } = user.data.user;
 
-          return { user: others };
+          return user.data;
         } catch (error: any) {
           throw new Error(error.response?.data?.msg || "Something went wrong");
         }

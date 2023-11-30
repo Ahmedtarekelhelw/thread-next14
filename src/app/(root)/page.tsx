@@ -1,10 +1,12 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchPosts } from "@/lib/actions/thread.actions";
-import { currentUser } from "@clerk/nextjs";
+import { getServerSession } from "next-auth";
+import { options } from "../api/auth/[...nextauth]/options";
 
 export default async function Home() {
   const Posts = await fetchPosts(1, 30);
-  const user = await currentUser();
+
+  const user = await getServerSession(options);
 
   return (
     <>
@@ -19,7 +21,7 @@ export default async function Home() {
               <ThreadCard
                 key={post._id}
                 postId={post._id}
-                currentUserId={user?.id || ""}
+                currentUserId={user?.user._id || ""}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}

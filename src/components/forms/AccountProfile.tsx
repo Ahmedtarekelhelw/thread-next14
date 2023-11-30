@@ -23,16 +23,16 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { updatedUser } from "@/lib/actions/user.actions";
 import { usePathname, useRouter } from "next/navigation";
 
-interface Props {
+type Props = {
   user: {
-    _id: string;
-    username: string;
-    name: string;
-    bio: string;
-    image: string;
+    _id?: string;
+    username?: string;
+    name?: string;
+    bio?: string;
+    image?: string;
   };
   btnTitle: string;
-}
+};
 const AccountProfile = ({ user, btnTitle }: Props) => {
   const router = useRouter();
   const pathname = usePathname();

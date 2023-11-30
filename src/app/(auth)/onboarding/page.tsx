@@ -1,17 +1,12 @@
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import AccountProfile from "@/components/forms/AccountProfile";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 const page = async () => {
-  const { user: userData } = await getServerSession(options);
+  const user = await getServerSession(options);
 
-  const userInfo = {};
-  // const userData = {
-  //   _id: user?.id,
-  //   username: userInfo?.username || user?.username,
-  //   name: userInfo?.name || user?.firstName || "",
-  //   bio: userInfo.bio || "",
-  //   image: userInfo?.image || user?.imageUrl,
-  // };
+  if (user?.user.onboarded) redirect("/");
+
   return (
     <main className="mx-auto flex max-w-3xl flex-col justify-start px-10 py-20">
       <h1 className="head-text">Onboarding</h1>
@@ -20,7 +15,16 @@ const page = async () => {
       </p>
 
       <section className="mt-9 bg-dark-2 p-10">
-        <AccountProfile user={userData} btnTitle="Continue" />
+        <AccountProfile
+          user={{
+            _id: user?.user._id,
+            username: user?.user.username,
+            name: user?.user.name,
+            bio: user?.user.bio,
+            image: user?.user.image,
+          }}
+          btnTitle="Continue"
+        />
       </section>
     </main>
   );

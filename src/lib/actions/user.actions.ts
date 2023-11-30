@@ -6,20 +6,20 @@ import { connectToDB } from "../mongoose";
 import Thread from "../models/thread.model";
 
 type UserData = {
-  userId: string;
-  username: string;
-  name: string;
-  image: string;
-  bio: string;
-  path: string;
+  userId?: string;
+  username?: string;
+  name?: string;
+  image?: string;
+  bio?: string;
+  path?: string;
 };
 export async function updatedUser(data: UserData): Promise<void> {
-  connectToDB();
+  await connectToDB();
 
   try {
     await User.findByIdAndUpdate(data.userId, {
       ...data,
-      username: data.username.toLowerCase(),
+      username: data.username,
       onboarded: true,
     });
 

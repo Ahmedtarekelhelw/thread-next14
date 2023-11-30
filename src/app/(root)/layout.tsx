@@ -5,6 +5,7 @@ import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSidebar";
 import Bottombar from "@/components/shared/Bottombar";
+import AuthProvider from "../context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,16 +21,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Topbar />
-        <main className="flex">
-          <LeftSidebar />
-          <section className="main-container">
-            <div className="w-full max-w-4xl">{children}</div>
-          </section>
-          <RightSidebar />
-        </main>
+        <AuthProvider>
+          <Topbar />
+          <main className="flex">
+            <LeftSidebar />
+            <section className="main-container">
+              <div className="w-full max-w-4xl">{children}</div>
+            </section>
+            <RightSidebar />
+          </main>
 
-        <Bottombar />
+          <Bottombar />
+        </AuthProvider>
       </body>
     </html>
   );
