@@ -2,9 +2,12 @@
 
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FormEvent } from "react";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
+  const router = useRouter();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -16,8 +19,10 @@ const SignUp = () => {
         username,
         password,
       });
-    } catch (error) {
-      console.log("fdsf", error);
+
+      router.push("/sign-in");
+    } catch (error: any) {
+      toast.error(error.response.data.msg);
     }
   };
   return (

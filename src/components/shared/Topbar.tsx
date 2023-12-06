@@ -1,3 +1,5 @@
+"use client";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,9 +12,7 @@ const Topbar = () => {
       </Link>
 
       <div className="flex items-center gap-1">
-        <div className="block md:hidden">
-          {/* <SignedIn> */}
-          {/* <SignOutButton> */}
+        <div className="block md:hidden" onClick={() => signOut()}>
           <div className="flex cursor-pointer">
             <Image
               src="/assets/logout.svg"
@@ -21,8 +21,6 @@ const Topbar = () => {
               height={24}
             />
           </div>
-          {/* </SignOutButton> */}
-          {/* </SignedIn> */}
         </div>
         {/* <OrganizationSwitcher
           appearance={{

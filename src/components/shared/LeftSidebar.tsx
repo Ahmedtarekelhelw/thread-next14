@@ -2,17 +2,12 @@
 import Link from "next/link";
 import { sidebarLinks } from "@/constants";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-// import { SignOutButton, SignedIn, useAuth } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 const LeftSidebar = () => {
   const pathname = usePathname();
-
-  const router = useRouter();
-  //
   const { data: session } = useSession();
   const userId = session?.user._id;
-  // const { userId } = useAuth();
   return (
     <section className="custom-scrollbar leftsidebar">
       <div className="flex w-full flex-1 flex-col gap-6 px-6">
@@ -40,15 +35,11 @@ const LeftSidebar = () => {
         })}
       </div>
 
-      <div className="mt-10 px-6 pl-10  ">
-        {/* <SignedIn> */}
-        {/* <SignOutButton signOutCallback={() => router.push("/sign-in")}> */}
+      <div className="mt-10 px-6 pl-10" onClick={() => signOut()}>
         <div className="flex cursor-pointer gap-4">
           <Image src="/assets/logout.svg" alt="logout" width={24} height={24} />
           <p className="text-light-2 max-lg:hidden">Logout</p>
         </div>
-        {/* </SignOutButton> */}
-        {/* </SignedIn> */}
       </div>
     </section>
   );

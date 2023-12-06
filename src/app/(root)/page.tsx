@@ -2,11 +2,14 @@ import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchPosts } from "@/lib/actions/thread.actions";
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const Posts = await fetchPosts(1, 30);
 
-  const user = await getServerSession(options);
+  const session = await getServerSession(options);
+
+  if (!session?.user) redirect("/sign-in");
 
   return (
     <>
@@ -21,7 +24,7 @@ export default async function Home() {
               <ThreadCard
                 key={post._id}
                 postId={post._id}
-                currentUserId={user?.user._id || ""}
+                currentUserId={session?.user._id || ""}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}

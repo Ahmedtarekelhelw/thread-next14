@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 const Login = () => {
   const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
@@ -24,14 +26,14 @@ const Login = () => {
 
     // if the request is ok
     if (res?.ok) {
-      if (!session?.user?.onboarded) {
+      if (session?.user && !session?.user?.onboarded) {
         router.push("/onboarding");
-        return;
       }
       router.push("/");
     } else {
       toast.error(res?.error);
     }
+    setLoading(false);
   };
 
   return (
@@ -55,8 +57,9 @@ const Login = () => {
         <button
           className="p-2 rounded-md outline-none no-focus bg-primary-500"
           type="submit"
+          disabled={loading}
         >
-          Sign In
+          {!loading ? "Sign In" : "Loading...."}
         </button>
         <Link href="/sign-up" className="text-white">
           Don`t have an account ?
