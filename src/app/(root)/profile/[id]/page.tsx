@@ -1,9 +1,10 @@
+import { options } from "@/app/api/auth/[...nextauth]/options";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
 import { fetchUser } from "@/lib/actions/user.actions";
-import { currentUser } from "@clerk/nextjs";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
@@ -12,21 +13,19 @@ type Props = {
 };
 
 const Page = async ({ params }: Props) => {
-  const user = await currentUser();
+  const session = await getServerSession(options);
 
-  if (!user) return null;
-
+  if (!session?.user) return null;
 
   const userInfo = await fetchUser(params.id);
-
 
   if (!userInfo.onboarded) redirect("/onboarding");
 
   return (
     <section>
       <ProfileHeader
-        accountId={userInfo.id}
-        authUserId={user.id}
+        accountId={userInfo._id}
+        authUserId={session?.user._id}
         name={userInfo.name}
         username={userInfo.username}
         imgUrl={userInfo.image}
@@ -61,7 +60,7 @@ const Page = async ({ params }: Props) => {
               value={tab.value}
             >
               <ThreadsTab
-                currentUserId={user.id}
+                currentUserId={session?.user._id}
                 accountId={userInfo.id}
                 accountType="User"
               />

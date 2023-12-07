@@ -1,8 +1,9 @@
+import { options } from "@/app/api/auth/[...nextauth]/options";
 import ThreadCard from "@/components/cards/ThreadCard";
 import Comment from "@/components/forms/Comment";
 import { fetchPostById } from "@/lib/actions/thread.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
-import { currentUser } from "@clerk/nextjs";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 type Props = {
@@ -13,11 +14,13 @@ type Props = {
 const Page = async ({ params }: Props) => {
   if (!params.id) return null;
 
-  const user = await currentUser();
+  const session = await getServerSession(options);
 
-  if (!user) return null;
+  // const user = await currentUser();
 
-  const userInfo = await fetchUser(user.id);
+  if (!session?.user) return null;
+
+  const userInfo = await fetchUser(session?.user._id);
 
   if (!userInfo.onboarded) redirect("/onboarding");
 
@@ -28,7 +31,7 @@ const Page = async ({ params }: Props) => {
       <div>
         <ThreadCard
           postId={post._id}
-          currentUserId={user?.id || ""}
+          currentUserId={session?.user._id || ""}
           parentId={post.parentId}
           content={post.text}
           author={post.author}
@@ -42,7 +45,7 @@ const Page = async ({ params }: Props) => {
         <Comment
           postId={post.id}
           currentUserImage={userInfo.image}
-          currentUserId={JSON.stringify(userInfo._id)}
+          currentUserId={userInfo._id}
         />
       </div>
 
@@ -51,7 +54,7 @@ const Page = async ({ params }: Props) => {
           <ThreadCard
             key={child._id}
             postId={child._id}
-            currentUserId={user?.id || ""}
+            currentUserId={session?.user?._id || ""}
             parentId={child.parentId}
             content={child.text}
             author={child.author}

@@ -33,8 +33,7 @@ export async function updatedUser(data: UserData): Promise<void> {
 export async function fetchUser(userId: string) {
   connectToDB();
   try {
-    const user = await User.findOne({ id: userId });
-
+    const user = await User.findById(userId);
     return user;
   } catch (error: any) {
     throw new Error(`Field to get user: ${error.message} `);

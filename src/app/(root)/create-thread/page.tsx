@@ -1,20 +1,21 @@
+import { options } from "@/app/api/auth/[...nextauth]/options";
 import PostThread from "@/components/forms/PostThread";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 const page = async () => {
-  const user = await currentUser();
+  const session = await getServerSession(options);
 
-  if (!user) return null;
+  if (!session?.user) redirect("/sign-in");
+  // const userInfo = await fetchUser(session?.user._id);
 
-  const userInfo = await fetchUser(user.id);
-
-  if (!userInfo.onboarded) redirect("/onboarding");
+  if (!session?.user.onboarded) redirect("/onboarding");
   return (
     <>
       <h1 className="head-text">Create Thread</h1>;
-      <PostThread userId={userInfo._id} />
+      <PostThread userId={session?.user._id} />
     </>
   );
 };
