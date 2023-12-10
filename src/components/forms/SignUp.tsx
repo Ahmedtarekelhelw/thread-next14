@@ -1,8 +1,7 @@
 "use client";
-
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import { toast } from "react-toastify";
 

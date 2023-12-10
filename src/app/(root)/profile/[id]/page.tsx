@@ -61,7 +61,7 @@ const Page = async ({ params }: Props) => {
             >
               <ThreadsTab
                 currentUserId={session?.user._id}
-                accountId={userInfo.id}
+                accountId={userInfo._id}
                 accountType="User"
               />
             </TabsContent>

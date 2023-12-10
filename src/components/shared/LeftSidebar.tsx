@@ -1,25 +1,33 @@
 "use client";
-import Link from "next/link";
 import { sidebarLinks } from "@/constants";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 const LeftSidebar = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const router = useRouter();
   const userId = session?.user._id;
+
+  const handleNavigate = (route: string) => {
+    if (route === "/profile") {
+      router.push(`${route}/${userId}`);
+    } else {
+      router.push(route);
+    }
+  };
+
   return (
     <section className="custom-scrollbar leftsidebar">
       <div className="flex w-full flex-1 flex-col gap-6 px-6">
         {sidebarLinks.map((link) => {
           const isActive = pathname === link.route;
 
-          if (link.route === "/profile") link.route = `${link.route}/${userId}`;
           return (
-            <Link
-              href={link.route}
+            <div
+              onClick={() => handleNavigate(link.route)}
               key={link.label}
-              className={`leftsidebar_link hover:bg-primary-500 duration-300 ${
+              className={`leftsidebar_link hover:bg-primary-500 duration-300 cursor-pointer ${
                 isActive && "bg-primary-500"
               }`}
             >
@@ -30,7 +38,7 @@ const LeftSidebar = () => {
                 height={24}
               />
               <p className="text-light-1 max-lg:hidden">{link.label}</p>
-            </Link>
+            </div>
           );
         })}
       </div>

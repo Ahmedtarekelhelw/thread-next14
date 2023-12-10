@@ -148,7 +148,6 @@ export const addComment = async ({
     originalThread.children.push(savedComment._id);
 
     // Save the original thread
-
     await originalThread.save();
 
     revalidatePath(path);

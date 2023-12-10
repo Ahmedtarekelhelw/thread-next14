@@ -18,22 +18,28 @@ const Login = () => {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    const res = await signIn("credentials", {
-      username,
-      password,
-      redirect: false,
-    });
+    try {
+      const res = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+      });
+      // if the request is ok
+      if (res?.ok) {
+        setLoading(false);
 
-    // if the request is ok
-    if (res?.ok) {
-      if (session?.user && !session?.user?.onboarded) {
-        router.push("/onboarding");
+        if (session?.user && !session?.user?.onboarded) {
+          router.push("/onboarding");
+        }
+        router.push("/");
+      } else {
+        setLoading(false);
+
+        toast.error(res?.error);
       }
-      router.push("/");
-    } else {
-      toast.error(res?.error);
+    } catch (error) {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
