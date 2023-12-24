@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import Thread from "../models/thread.model";
+import { FilterQuery, SortOrder } from "mongoose";
 
 type UserData = {
   userId?: string;
@@ -13,7 +14,15 @@ type UserData = {
   bio?: string;
   path?: string;
 };
-export async function updatedUser(data: UserData): Promise<void> {
+
+type SearchUsers = {
+  userId: string;
+  searchString?: string;
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: SortOrder;
+};
+export const updatedUser = async (data: UserData): Promise<void> => {
   await connectToDB();
 
   try {
@@ -29,8 +38,8 @@ export async function updatedUser(data: UserData): Promise<void> {
   } catch (error: any) {
     throw new Error(`Field to Create/Update user: ${error.message} `);
   }
-}
-export async function fetchUser(userId: string) {
+};
+export const fetchUser = async (userId: string) => {
   connectToDB();
   try {
     const user = await User.findById(userId);
@@ -38,7 +47,7 @@ export async function fetchUser(userId: string) {
   } catch (error: any) {
     throw new Error(`Field to get user: ${error.message} `);
   }
-}
+};
 
 export const fetchUserPosts = async (userId: string) => {
   try {
@@ -62,5 +71,47 @@ export const fetchUserPosts = async (userId: string) => {
     return posts;
   } catch (err) {
     throw new Error("Faild to get Posts");
+  }
+};
+
+export const fetchUsers = async ({
+  userId,
+  searchString = "",
+  pageNumber = 1,
+  pageSize = 20,
+  sortBy = "desc",
+}: SearchUsers) => {
+  try {
+    connectToDB();
+
+    const skipAmount = (pageNumber - 1) * pageSize;
+
+    const regex = new RegExp(searchString, "i");
+
+    const query: FilterQuery<typeof User> = { id: { $ne: userId } };
+
+    if (searchString.trim() !== "") {
+      query.$or = [
+        { username: { $regex: regex } },
+        { name: { $regex: regex } },
+      ];
+    }
+
+    const sortOptions = { createdAt: sortBy };
+
+    const usersQuery = User.find(query)
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const totalUsersCount = await User.countDocuments(query);
+
+    const users = await usersQuery.exec();
+
+    const isNext = totalUsersCount > skipAmount + users.length;
+
+    return { users, isNext };
+  } catch (error: any) {
+    throw new Error(`Failed to fetch Users ${error.message}`);
   }
 };
