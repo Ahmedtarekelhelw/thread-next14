@@ -1,20 +1,33 @@
 "use client";
-import Link from "next/link";
 import { sidebarLinks } from "@/constants";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 const Bottombar = () => {
   const pathname = usePathname();
+
+  const { data: session } = useSession();
+  const router = useRouter();
+  const userId = session?.user._id;
+
+  const handleNavigate = (route: string) => {
+    if (route === "/profile") {
+      router.push(`${route}/${userId}`);
+    } else {
+      router.push(route);
+    }
+  };
+
   return (
     <section className="bottombar">
       <div className="bottombar_container">
         {sidebarLinks.map((link) => {
-          const isActive = pathname.includes(link.route);
+          const isActive = pathname.split("/")[1] === link.route.split("/")[1];
           return (
-            <Link
-              href={link.route}
+            <div
+              onClick={() => handleNavigate(link.route)}
               key={link.label}
-              className={`bottombar_link hover:bg-primary-500 duration-300 ${
+              className={`bottombar_link cursor-pointer hover:bg-primary-500 duration-300 ${
                 isActive && "bg-primary-500"
               }`}
             >
@@ -27,7 +40,7 @@ const Bottombar = () => {
               <p className="text-light-1 text-subtle-medium max-sm:hidden">
                 {link.label.split(/\s+/)[0]}
               </p>
-            </Link>
+            </div>
           );
         })}
       </div>
